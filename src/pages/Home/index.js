@@ -1,17 +1,58 @@
+import React, { useState } from 'react';
+
+function Login(props) {
+    const [username, setUsername] = useState('');
+    const [password, setPassword] = useState('');
+    const [loggedIn, setLoggedIn] = useState(false);
+
+    const handleLogin = () => {
+        if (username === props.user && password === props.password) {
+            setLoggedIn(true);
+        }
+        else {
+            setLoggedIn(false);
+        }
+    }
+
+    return (
+        <header>
+            <div id="login">
+                <form className="card">
+                    <div className="card-content">
+                        <div className="card-content-area">
+                            <label htmlFor="usuario">Usuário</label>
+                            <input type="text" id="usuario" autoComplete="off" value={username} onChange={(e) => setUsername(e.target.value)} />
+                        </div>
+                        <div className="card-content-area">
+                            <label htmlFor="password">Senha</label>
+                            <input type="password" id="password" autoComplete="off" value={password} onChange={(e) => setPassword(e.target.value)} />
+                        </div>
+                    </div>
+                    <div className="card-footer">
+                        <input type="button" value="Login" className="submit" onClick={handleLogin} />
+                        {loggedIn && <p>Seja Bem-vindo {props.user}!</p>}
+                    </div>
+                </form>
+            </div>
+        </header>
+    );
+}
+
 function SliderDestaque() {
 
     return (
-        <section className="slider-destaque">
+        <div className="slider-destaque">
             <img src="/images/imagem-slide1.jpg" alt="La Veneta" className="Pizza" />
             <img src="/images/imagem-slide2.jpg" alt="La Veneta" className="logo" />
             <img src="/images/imagem-slide3.jpg" alt="La Veneta" className="logo" />
             <img src="/images/imagem-slide4.jpg" alt="La Veneta" className="logo" />
-        </section>
+        </div>
     );
 }
+
 function SobreNos() {
     return (
-        <section>
+        <section className="container-sobre">
             <div className="container">
                 <div className="imagem">
                     <img src="images/imagem-sobre.jpg" alt="Imagem sobre nós" />
@@ -83,6 +124,7 @@ function RedesSociais() {
 function Home() {
     return (
         <div>
+            <Login user={"Gabriel"} password={"1234"} />
             <SliderDestaque />
             <SobreNos />
             <Contato />

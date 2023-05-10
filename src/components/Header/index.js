@@ -1,28 +1,30 @@
 import { Link } from 'react-router-dom';
 
 function Header() {
+    const activeStyle = {
+        fontWeight: 'bold',
+        color: 'red',
+    };
+
     return (
         <header>
-            <h1>La Veneta</h1>
+            <h1 className='logo-name'>La Veneta</h1>
             <div className="logo-container">
                 <img src="/images/logo.png" alt="Logo La Veneta" className="logo" />
             </div>
-            <Menu />
+                    <Link exact to="/" className="nav-link" activeStyle={activeStyle}>
+                        Home
+                    </Link>
+                    <Link to="/chef" className="nav-link" activeStyle={activeStyle}>
+                        Chef
+                    </Link>
+                    <Link to="/pedidos" className="nav-link" activeStyle={activeStyle}>
+                        Pedidos
+                    </Link>
+                    <Link to="/reservas" className="nav-link" activeStyle={activeStyle}>
+                        Reservas
+                    </Link>
         </header>
-    );
+    )
 }
-function Menu() {
-    return (
-        <header>
-            <h2>Header</h2>
-            <div>
-                <Link to="/">Home</Link>
-                <Link to="/chef">Chef</Link>
-                <Link to="/pedidos">Pedidos</Link>
-                <Link to="/reservas">Reservas</Link>
-            </div>
-        </header>
-    );
-}
-
 export default Header;

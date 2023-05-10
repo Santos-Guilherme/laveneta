@@ -10,13 +10,13 @@ function Table() {
     const [valorTotal, setValorTotal] = useState(0);
 
     const [itensAdicionados, setItensAdicionados] = useState([]);
-    
+
 
     const handleItemAdicionado = (item) => {
         setItensAdicionados([...itensAdicionados, item]);
         setValorTotal(valorTotal + item.valor);
     };
-    
+
     const handleRemoveItem = (index) => {
         const itemRemovido = itensAdicionados[index];
         const novoItem = [...itensAdicionados];
@@ -27,62 +27,64 @@ function Table() {
 
 
     return (
-        <div>
-            <h1>Cardárpio</h1>
+        <section>
             <div>
-                <table>
-                    <thead>
-                        <tr>
-                            <th>ID</th>
-                            <th>Nome</th>
-                            <th>Ingrediente</th>
-                            <th>Preço</th>
-                            <th>Adicionar</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {items.map((item) => (
-                            <tr key={item.id}>
-                                <td>{item.id}</td>
-                                <td>{item.nome}</td>
-                                <td>{item.ingredientes}</td>
-                                <td>{item.valor}</td>
-                                <td><AddButton onClick={() => handleItemAdicionado(item)} /></td>
-                            </tr>
-                        ))}
-                    </tbody>
-                </table>
+                <h1>Cardárpio</h1>
                 <div>
-                    <h2>Added Items</h2>
-                    <ul>
-                        {itensAdicionados.map((item, index) => (
-                            <li key={index}>
-                                {item.nome} - R$ {item.valor.toFixed(2)}
-                                <RemoveButton onClick={() => handleRemoveItem(index)} />
-                            </li>
-                        ))}
-                        <br></br>
-                        <li>Total - R$ {valorTotal.toFixed(2)}</li>
-                    </ul>
-                    <label htmlFor="tableNumber">Número da mesa:</label>
-                    <input type="number" id="tableNumber" name="tableNumber" />
-                    <button >Enviar Pedido</button>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Nome</th>
+                                <th>Ingrediente</th>
+                                <th>Preço</th>
+                                <th>Adicionar</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {items.map((item) => (
+                                <tr key={item.id}>
+                                    <td>{item.id}</td>
+                                    <td>{item.nome}</td>
+                                    <td>{item.ingredientes}</td>
+                                    <td>{item.valor}</td>
+                                    <td><AddButton onClick={() => handleItemAdicionado(item)} /></td>
+                                </tr>
+                            ))}
+                        </tbody>
+                    </table>
+                    <br/>
+                    <div>
+                        <h2>Comanda</h2>
+                        <ul className='item-adicionado'>
+                            {itensAdicionados.map((item, index) => (
+                                <li key={index}>
+                                    {item.nome} - R$ {item.valor.toFixed(2)}
+                                    <RemoveButton onClick={() => handleRemoveItem(index)} />
+                                </li>
+                            ))}
+                            <br></br>
+                            <li>Total - R$ {valorTotal.toFixed(2)}</li>
+                        </ul>
+                        <label htmlFor="tableNumber">Número da mesa:</label>
+                        <input type="number" id="tableNumber" name="tableNumber" />
+                        <button >Enviar Pedido</button>
+                    </div>
                 </div>
             </div>
-        </div>
-
+        </section>
     );
 }
 
 function AddButton(props) {
     return (
-        <img src="add.png" alt="Adicionar" onClick={props.onClick} />
+        <img className='button-pedidos' src="images/adicionar.png" alt="Adicionar" onClick={props.onClick} />
     );
 }
 
 function RemoveButton(props) {
     return (
-        <img src="remove.png" alt="Remover" onClick={props.onClick} />
+        <img className='button-pedidos' src="images/remove.png" alt="Remover" onClick={props.onClick} />
     );
 }
 

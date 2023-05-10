@@ -21,6 +21,7 @@ function Chef() {
     }
 
     return (
+        <section>
         <div>
             <h2>Pedidos</h2>
             <table>
@@ -43,6 +44,7 @@ function Chef() {
                     ))}
                 </tbody>
             </table>
+            <br/>
             <h2>Itens prontos</h2>
             <table>
                 <thead>
@@ -56,7 +58,6 @@ function Chef() {
                     {itemsProntos.map(item => (
                         <tr key={item.id}>
                             <td>{item.id}</td>
-                            <td>{item.mesa}</td>
                             <td>{item.nome}</td>
                             <td><button onClick={() => PedidoEntregado(item.id)}>Bom apetite!</button></td>
                         </tr>
@@ -64,6 +65,7 @@ function Chef() {
                 </tbody>
             </table>
         </div>
+        </section>
     );
 }
 
