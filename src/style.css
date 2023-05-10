@@ -93,6 +93,7 @@ h2 {
 
 .container {
     display: flex;
+    align-items: center;
 }
 
 .container-sobre{
@@ -100,11 +101,14 @@ h2 {
 }
 
 .imagem {
-    flex: 1;
+    align-items: center;
+    padding: 0px 100px;
 }
 
 .imagem img {
-    max-width: 100%;
+    border: solid 5px;
+    border-color: #df7a15;
+    height: 500px;
 }
 
 .texto {
@@ -121,6 +125,7 @@ h2 {
     margin: 0px;
     display: flex;
     align-items: center;
+    justify-content: center;
 }
 
 .slider-destaque img {

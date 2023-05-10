@@ -15,7 +15,6 @@ function Reservas() {
     event.preventDefault();
     setReservas([...reservas, formData]);
     setFormData({
-      name: "",
       cpf: "",
       date: "",
       time: "",
@@ -91,7 +90,7 @@ function Reservas() {
             />
           </label>
           <br />
-          <button type="submit">Enviar</button>
+          <button type="submit">Reservar</button>
         </form>
         <br />
         <h2>Reservas</h2>
