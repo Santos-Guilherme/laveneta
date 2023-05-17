@@ -1,6 +1,13 @@
 import React, { useState } from 'react';
 
 function Table() {
+
+    const [pedidoFeito, setPedidoFeito] = useState(false);
+
+    const handlePedido = () => {
+            setPedidoFeito(true);
+    }
+
     const [items, setItems] = useState([
         { id: 1, nome: "Pizza Mussarela", ingredientes: "Queijo mussarela, azeite e orégano.", valor: 26 },
         { id: 2, nome: "Pizza Calabresa", ingredientes: "Queijo mussarela, calabresa fatiada, cebola e azeitona.", valor: 27.8 },
@@ -68,7 +75,8 @@ function Table() {
                         </ul>
                         <label htmlFor="tableNumber">Número da mesa:</label>
                         <input type="number" id="tableNumber" name="tableNumber" />
-                        <button >Enviar Pedido</button>
+                        <input type="button" value="Pedido" className="submit" onClick={handlePedido} />
+                        {pedidoFeito && <p>Pedido feito!</p>}
                     </div>
                 </div>
             </div>

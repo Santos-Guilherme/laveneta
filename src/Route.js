@@ -9,6 +9,7 @@ import Header from './components/Header';
 import Footer from './components/Footer'
 import Pedidos from './pages/Pedidos';
 import Reservas from './pages/Reservas';
+import Comanda from './pages/Comanda';
 import Erro from './pages/Erro';
 
 function RouterApp() {
@@ -20,6 +21,7 @@ function RouterApp() {
                 <Route path="/chef" element={<Chef />} />
                 <Route path="/pedidos" element={<Pedidos />} />
                 <Route path="/reservas" element={<Reservas />} />
+                <Route path="/comanda" element={<Comanda />} />
 
                 <Route path='*' element={<Erro />} />
             </Routes>

@@ -56,7 +56,9 @@ header .nav-link:hover:not(.active) {
 }
 
 .logo-container {
+    display: flexbox;
     flex: 1;
+    justify-content: baseline;
 }
 
 .logo {

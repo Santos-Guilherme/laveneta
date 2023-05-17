@@ -1,14 +1,14 @@
 import React, { useState } from 'react';
 
-function Chef() {
+function Comanda() {
     const [pedidos, setPedidos] = useState([
-        { id: 3, mesa: 4, nome: "Frango com Catupiry, Mussarela, Calabresa"},
-        { id: 2, mesa: 5, nome: "Mussarela"},
-        { id: 1, mesa: 1, nome: "Calabresa"}
+        { id: 3, mesa: 4, nome: "Frango com Catupiry, Mussarela, Calabresa", valor: 84},
+        { id: 2, mesa: 5, nome: "Mussarela", valor: 26.0},
+        { id: 1, mesa: 1, nome: "Calabresa", valor: 27.8}
     ]);
     const [itemsProntos, setItemsProntos] = useState([]);
 
-    function PedidoPronto(id) {
+    function PedidoPago(id) {
         const pedidoIndex = pedidos.findIndex(pedido => pedido.id === id);
         const pedido = pedidos[pedidoIndex];
 
@@ -16,7 +16,7 @@ function Chef() {
         setPedidos(pedidos.filter(pedido => pedido.id !== id));
     }
 
-    function PedidoEntregado(id) {
+    function PedidoFechado(id) {
         setItemsProntos(itemsProntos.filter(item => item.id !== id));
     }
 
@@ -30,6 +30,7 @@ function Chef() {
                         <th>ID</th>
                         <th>Mesa</th>
                         <th>Nome</th>
+                        <th>Preço</th>
                         <th>Ação</th>
                     </tr>
                 </thead>
@@ -39,7 +40,8 @@ function Chef() {
                             <td>{pedido.id}</td>
                             <td>{pedido.mesa}</td>
                             <td>{pedido.nome}</td>
-                            <td><button onClick={() => PedidoPronto(pedido.id)}>Pronto</button></td>
+                            <td>{pedido.valor}</td>
+                            <td><button onClick={() => PedidoPago(pedido.id)}>Pagamento efetuado</button></td>
                         </tr>
                     ))}
                 </tbody>
@@ -50,7 +52,8 @@ function Chef() {
                 <thead>
                     <tr>
                         <th>ID</th>
-                        <th>Nome</th>
+                        <th>Mesa</th>
+                        <th>Preço</th>
                         <th>Ação</th>
                     </tr>
                 </thead>
@@ -58,8 +61,9 @@ function Chef() {
                     {itemsProntos.map(item => (
                         <tr key={item.id}>
                             <td>{item.id}</td>
-                            <td>{item.nome}</td>
-                            <td><button onClick={() => PedidoEntregado(item.id)}>Bom apetite!</button></td>
+                            <td>{item.mesa}</td>
+                            <td>{item.valor}</td>
+                            <td><button onClick={() => PedidoFechado(item.id)}>Verificado. Fechar Comanda</button></td>
                         </tr>
                     ))}
                 </tbody>
@@ -69,4 +73,4 @@ function Chef() {
     );
 }
 
-export default Chef;
+export default Comanda;

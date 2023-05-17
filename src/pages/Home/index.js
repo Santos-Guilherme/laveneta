@@ -124,7 +124,7 @@ function RedesSociais() {
 function Home() {
     return (
         <div>
-            <Login user={"Gabriel"} password={"1234"} />
+            <Login user={"User"} password={"1234"} />
             <SliderDestaque />
             <SobreNos />
             <Contato />
