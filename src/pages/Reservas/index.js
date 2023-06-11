@@ -1,25 +1,96 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 
 function Reservas() {
   const [formData, setFormData] = useState({
-    name: "",
+    nomeCliente: "",
     cpf: "",
-    date: "",
-    time: "",
-    tableNumber: ""
+    data: "",
+    hora: "",
+    mesaReservada: ""
   });
 
   const [reservas, setReservas] = useState([]);
+  const [cpfValido, setCpfValido] = useState(true);
+  const [nomeValido, setNomeValido] = useState(true);
+  const [dataValida, setDataValida] = useState(true);
 
-  const handleSubmit = (event) => {
+  const fetchReservas = async () => {
+    try {
+      const response = await fetch("http://localhost:3333/laveneta/reservas");
+      const data = await response.json();
+      setReservas(data);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  useEffect(() => {
+    fetchReservas();
+  }, []);
+
+  const handleSubmit = async (event) => {
     event.preventDefault();
-    setReservas([...reservas, formData]);
-    setFormData({
-      cpf: "",
-      date: "",
-      time: "",
-      tableNumber: ""
-    });
+
+    // Validação de CPF
+    const cpfRegex = /^\d{3}\.\d{3}\.\d{3}-\d{2}$/;
+    const isCpfValid = cpfRegex.test(formData.cpf);
+    setCpfValido(isCpfValid);
+
+    // Validação de Nome
+    const nomeRegex = /^[A-Za-z\s]+$/;
+    const isNomeValido = nomeRegex.test(formData.nomeCliente);
+    setNomeValido(isNomeValido);
+
+    // Validação de Data
+    const today = new Date();
+    const selectedDate = new Date(formData.data);
+    const isDataValida = selectedDate > today;
+    setDataValida(isDataValida);
+
+    if (isCpfValid && isNomeValido && isDataValida) {
+      try {
+        const response = await fetch("http://localhost:3333/laveneta/reservas", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify(formData)
+        });
+
+        if (response.ok) {
+          const data = await response.json();
+          setReservas([...reservas, data]);
+          setFormData({
+            nomeCliente: "",
+            cpf: "",
+            data: "",
+            hora: "",
+            mesaReservada: ""
+          });
+        } else {
+          console.log("Erro ao criar reserva");
+        }
+        fetchReservas();
+      } catch (error) {
+        console.log(error);
+      }
+    }
+  };
+
+  const handleDelete = async (id) => {
+    try {
+      const response = await fetch(`http://localhost:3333/laveneta/reservas/${id}`, {
+        method: "DELETE"
+      });
+
+      if (response.ok) {
+        fetchReservas();
+      } else {
+        console.log("Erro ao deletar reserva");
+      }
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   return (
@@ -31,12 +102,13 @@ function Reservas() {
             Nome:
             <input
               type="text"
-              name="name"
-              value={formData.name}
+              name="nomeCliente"
+              value={formData.nomeCliente}
               onChange={(event) =>
-                setFormData({ ...formData, name: event.target.value })
+                setFormData({ ...formData, nomeCliente: event.target.value })
               }
             />
+            {!nomeValido && <span>Nome inválido</span>}
           </label>
           <br />
           <label>
@@ -49,27 +121,29 @@ function Reservas() {
                 setFormData({ ...formData, cpf: event.target.value })
               }
             />
+            {!cpfValido && <span>CPF inválido</span>}
           </label>
           <br />
           <label>
             Data:
             <input
               type="date"
-              name="date"
-              value={formData.date}
+              name="data"
+              value={formData.data}
               onChange={(event) =>
-                setFormData({ ...formData, date: event.target.value })
+                setFormData({ ...formData, data: event.target.value })
               }
             />
+            {!dataValida && <span>Data inválida</span>}
           </label>
           <br />
           <label>
             Horário:
             <select
-              name="time"
-              value={formData.time}
+              name="hora"
+              value={formData.hora}
               onChange={(event) =>
-                setFormData({ ...formData, time: event.target.value })
+                setFormData({ ...formData, hora: event.target.value })
               }
             >
               <option value="">Selecione</option>
@@ -82,43 +156,49 @@ function Reservas() {
             Número da mesa:
             <input
               type="number"
-              name="tableNumber"
-              value={formData.tableNumber}
+              name="mesaReservada"
+              value={formData.mesaReservada}
               onChange={(event) =>
-                setFormData({ ...formData, tableNumber: event.target.value })
+                setFormData({ ...formData, mesaReservada: event.target.value })
               }
             />
           </label>
           <br />
-          <button type="submit">Reservar</button>
+          <button type="submit" onClick={handleSubmit} >Reservar</button>
         </form>
         <br />
         <h2>Reservas</h2>
         <table>
           <thead>
             <tr>
+              <th>ID</th>
               <th>Nome</th>
               <th>CPF</th>
               <th>Data</th>
               <th>Horário</th>
               <th>Número da mesa</th>
+              <th>Ação</th>
             </tr>
           </thead>
           <tbody>
-            {reservas.map((reserva, index) => (
-              <tr key={index}>
-                <td>{reserva.name}</td>
+            {reservas.map((reserva) => (
+              <tr key={reserva.id}>
+                <td>{reserva.id}</td>
+                <td>{reserva.nomeCliente}</td>
                 <td>{reserva.cpf}</td>
-                <td>{reserva.date}</td>
-                <td>{reserva.time}</td>
-                <td>{reserva.tableNumber}</td>
+                <td>{reserva.data}</td>
+                <td>{reserva.hora}</td>
+                <td>{reserva.mesaReservada}</td>
+                <td>
+                  <button onClick={() => handleDelete(reserva.id)}>Deletar</button>
+                </td>
               </tr>
             ))}
           </tbody>
         </table>
-            </div>
-        </section>
-    )
+      </div>
+    </section>
+  );
 }
 
 export default Reservas;

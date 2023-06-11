@@ -1,74 +1,98 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 
 function Comanda() {
-    const [pedidos, setPedidos] = useState([
-        { id: 3, mesa: 4, nome: "Frango com Catupiry, Mussarela, Calabresa", valor: 84},
-        { id: 2, mesa: 5, nome: "Mussarela", valor: 26.0},
-        { id: 1, mesa: 1, nome: "Calabresa", valor: 27.8}
-    ]);
+    const [pedidos, setPedidos] = useState([]);
     const [itemsProntos, setItemsProntos] = useState([]);
 
-    function PedidoPago(id) {
-        const pedidoIndex = pedidos.findIndex(pedido => pedido.id === id);
-        const pedido = pedidos[pedidoIndex];
+    useEffect(() => {
+        fetchPedidosEntregues();
+        fetchComandasPagas();
+    }, []);
 
-        setItemsProntos([...itemsProntos, pedido]);
-        setPedidos(pedidos.filter(pedido => pedido.id !== id));
+    async function fetchPedidosEntregues() {
+        try {
+            const response = await fetch("http://localhost:3333/laveneta/chef/pedidos/entregues");
+            const data = await response.json();
+            setPedidos(data);
+        } catch (error) {
+            console.error("Falha ao obter os pedidos entregues:", error);
+        }
     }
 
-    function PedidoFechado(id) {
-        setItemsProntos(itemsProntos.filter(item => item.id !== id));
+    async function fetchComandasPagas() {
+        try {
+            const response = await fetch("http://localhost:3333/laveneta/comandas/pagas");
+            const data = await response.json();
+            setItemsProntos(data);
+        } catch (error) {
+            console.error("Falha ao obter as comandas pagas:", error);
+        }
+    }
+
+    async function efetuarPagamento(id) {
+        try {
+            await fetch(`http://localhost:3333/laveneta/comandas/pagamento/${id}`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            });
+
+            setItemsProntos(itemsProntos.filter(item => item.id !== id));
+            fetchPedidosEntregues();
+            fetchComandasPagas();
+        } catch (error) {
+            console.error("Falha ao efetuar o pagamento da comanda:", error);
+        }
     }
 
     return (
         <section>
-        <div>
-            <h2>Pedidos</h2>
-            <table>
-                <thead>
-                    <tr>
-                        <th>ID</th>
-                        <th>Mesa</th>
-                        <th>Nome</th>
-                        <th>Preço</th>
-                        <th>Ação</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {pedidos.map(pedido => (
-                        <tr key={pedido.id}>
-                            <td>{pedido.id}</td>
-                            <td>{pedido.mesa}</td>
-                            <td>{pedido.nome}</td>
-                            <td>{pedido.valor}</td>
-                            <td><button onClick={() => PedidoPago(pedido.id)}>Pagamento efetuado</button></td>
+            <div>
+                <h2>A fazer pagamento:</h2>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Mesa</th>
+                            <th>Nome</th>
+                            <th>Preço</th>
+                            <th>Ação</th>
                         </tr>
-                    ))}
-                </tbody>
-            </table>
-            <br/>
-            <h2>Itens prontos</h2>
-            <table>
-                <thead>
-                    <tr>
-                        <th>ID</th>
-                        <th>Mesa</th>
-                        <th>Preço</th>
-                        <th>Ação</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {itemsProntos.map(item => (
-                        <tr key={item.id}>
-                            <td>{item.id}</td>
-                            <td>{item.mesa}</td>
-                            <td>{item.valor}</td>
-                            <td><button onClick={() => PedidoFechado(item.id)}>Verificado. Fechar Comanda</button></td>
+                    </thead>
+                    <tbody>
+                        {pedidos.map(pedido => (
+                            <tr key={pedido.id}>
+                                <td>{pedido.id}</td>
+                                <td>{pedido.mesa}</td>
+                                <td>{pedido.pizzas}</td>
+                                <td>{pedido.valorTotal}</td>
+                                <td><button onClick={() => efetuarPagamento(pedido.id)}>Efetuar Pagamento</button></td>
+                            </tr>
+                        ))}
+                    </tbody>
+                </table>
+                <br />
+                <h2>Pagamentos efetuados:</h2>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Mesa</th>
+                            <th>Preço</th>
                         </tr>
-                    ))}
-                </tbody>
-            </table>
-        </div>
+                    </thead>
+                    <tbody>
+                        {itemsProntos.map(item => (
+                            <tr key={item.id}>
+                                <td>{item.id}</td>
+                                <td>{item.mesa}</td>
+                                <td>{item.valorTotal}</td>
+                            </tr>
+                        ))}
+                    </tbody>
+                </table>
+            </div>
         </section>
     );
 }

@@ -11,6 +11,7 @@ import Pedidos from './pages/Pedidos';
 import Reservas from './pages/Reservas';
 import Comanda from './pages/Comanda';
 import Erro from './pages/Erro';
+import Login from './pages/Login';
 
 function RouterApp() {
     return (
@@ -22,7 +23,7 @@ function RouterApp() {
                 <Route path="/pedidos" element={<Pedidos />} />
                 <Route path="/reservas" element={<Reservas />} />
                 <Route path="/comanda" element={<Comanda />} />
-
+                <Route path="/login" element={<Login />} />
                 <Route path='*' element={<Erro />} />
             </Routes>
         <Footer/>

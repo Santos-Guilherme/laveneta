@@ -1,0 +1,51 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+//para criar a tabela(Migration): npx prisma migrate dev 
+model User {
+  id         String    @id @default(uuid())
+  name       String
+  email      String
+  password   String
+  created_at DateTime? @default(now())
+  updated_at DateTime? @default(now())
+
+  @@map("users")
+}
+
+model Cardapio {
+  id         String    @id @default(uuid())
+ sabor String
+ ingredientes String
+ valor Float
+ @@map("cardapio")
+}
+
+model Comanda {
+  id         String    @id @default(uuid())
+ mesa Int
+ pizzas String
+ valorTotal Float
+ estadoPronto Boolean
+ estadoEntregue Boolean
+ pagamento Boolean
+ @@map("comanda")
+}
+
+model Reserva {
+  id         String    @id @default(uuid())
+nomeCliente String
+cpf String
+data String
+hora String
+mesaReservada String
+@@map("reserva")
+}

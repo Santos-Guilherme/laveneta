@@ -1,23 +1,27 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 
-function Table() {
-
+function Pedidos() {
     const [pedidoFeito, setPedidoFeito] = useState(false);
-
-    const handlePedido = () => {
-            setPedidoFeito(true);
-    }
-
-    const [items, setItems] = useState([
-        { id: 1, nome: "Pizza Mussarela", ingredientes: "Queijo mussarela, azeite e orégano.", valor: 26 },
-        { id: 2, nome: "Pizza Calabresa", ingredientes: "Queijo mussarela, calabresa fatiada, cebola e azeitona.", valor: 27.8 },
-        { id: 3, nome: "Pizza Frango com Catupiry", ingredientes: "Queijo mussarela, frango desfiado, catupiry, milho e ervilha.", valor: 30.2 }
-    ]);
-
+    const [items, setItems] = useState([]);
     const [valorTotal, setValorTotal] = useState(0);
-
     const [itensAdicionados, setItensAdicionados] = useState([]);
+    const [mesa, setMesa] = useState('');
+    const [mesaValida, setMesaValida] = useState(true);
 
+    useEffect(() => {
+        // Função para obter os dados do cardápio do servidor
+        const getCardapio = async () => {
+            try {
+                const response = await fetch('http://localhost:3333/laveneta/cardapio'); // Substitua "/api/cardapio" pela rota correta da sua API
+                const data = await response.json();
+                setItems(data);
+            } catch (error) {
+                console.error('Erro ao obter o cardápio:', error);
+            }
+        };
+
+        getCardapio();
+    }, []);
 
     const handleItemAdicionado = (item) => {
         setItensAdicionados([...itensAdicionados, item]);
@@ -32,11 +36,44 @@ function Table() {
         setValorTotal(valorTotal - itemRemovido.valor);
     };
 
+    const handlePedido = async () => {
+        if (mesa > 0) {
+            setMesaValida(true);
+            try {
+                const pizzas = itensAdicionados.map((item) => item.sabor).join(', ');
+                const novoPedido = {
+                    mesa: Number(mesa),
+                    pizzas,
+                    valorTotal,
+                    estadoPronto: false,
+                    estadoEntregue: false,
+                    pagamento: false
+                };
+
+                const response = await fetch('http://localhost:3333/laveneta/pedidos', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(novoPedido)
+                });
+
+                if (response.ok) {
+                    setPedidoFeito(true);
+                } else {
+                    console.error('Erro ao criar o pedido:', response.status);
+                    setPedidoFeito(false);
+                }
+            } catch (error) {
+                console.error('Erro ao criar o pedido:', error);
+            }
+        } else {
+            setMesaValida(false);
+        }
+    };
 
     return (
         <section>
-            <div>
-                <h1>Cardárpio</h1>
                 <div>
                     <table>
                         <thead>
@@ -52,7 +89,7 @@ function Table() {
                             {items.map((item) => (
                                 <tr key={item.id}>
                                     <td>{item.id}</td>
-                                    <td>{item.nome}</td>
+                                    <td>{item.sabor}</td>
                                     <td>{item.ingredientes}</td>
                                     <td>{item.valor}</td>
                                     <td><AddButton onClick={() => handleItemAdicionado(item)} /></td>
@@ -60,24 +97,24 @@ function Table() {
                             ))}
                         </tbody>
                     </table>
-                    <br/>
+                    <br />
                     <div>
                         <h2>Comanda</h2>
                         <ul className='item-adicionado'>
                             {itensAdicionados.map((item, index) => (
                                 <li key={index}>
-                                    {item.nome} - R$ {item.valor.toFixed(2)}
+                                    {item.sabor} - R$ {item.valor.toFixed(2)}
                                     <RemoveButton onClick={() => handleRemoveItem(index)} />
                                 </li>
                             ))}
-                            <br></br>
+                            <br />
                             <li>Total - R$ {valorTotal.toFixed(2)}</li>
                         </ul>
-                        <label htmlFor="tableNumber">Número da mesa:</label>
-                        <input type="number" id="tableNumber" name="tableNumber" />
-                        <input type="button" value="Pedido" className="submit" onClick={handlePedido} />
-                        {pedidoFeito && <p>Pedido feito!</p>}
-                    </div>
+                    <label htmlFor="tableNumber">Número da mesa:</label>
+                    <input type="number" id="tableNumber" name="tableNumber" value={mesa} onChange={(e) => setMesa(e.target.value)} />
+                    {!mesaValida && <p>O número da mesa deve ser maior que 0</p>}
+                    <button type="submit" className="submit" onClick={handlePedido} >Pedido</button>
+                    {pedidoFeito && <p>Pedido feito!</p>}
                 </div>
             </div>
         </section>
@@ -96,13 +133,5 @@ function RemoveButton(props) {
     );
 }
 
-
-function Pedidos() {
-    return (
-        <div>
-            <Table />
-        </div>
-    );
-}
 
 export default Pedidos;
